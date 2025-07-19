@@ -78,7 +78,7 @@ class AuthController extends Controller
         ]);
     }
 
-        public function logout(Request $request)
+    public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
 
@@ -87,7 +87,7 @@ class AuthController extends Controller
         ]);
     }
 
-            public function dashboard(Request $request)
+    public function dashboard(Request $request)
     {
         $user = $request->user();
 
@@ -115,6 +115,50 @@ class AuthController extends Controller
                 ],
             ]);
         }
+    }
+
+    public function profile()
+    {
+        $user = Auth::user();
+
+        return response()->json([
+            'message' => 'Profile retrieved successfully.',
+            'data' => [
+                'name' => $user->name,
+                'email' => $user->email,
+                'age' => $user->age,
+                'gender' => $user->gender,
+                'phone_number' => $user->phone_number,
+                'medical_condition' => $user->medical_condition,
+                'role' => $user->role,
+            ]
+        ]);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'name' => 'nullable|string|max:255',
+            'age' => 'nullable|integer|min:0|max:120',
+            'gender' => 'nullable|in:male,female',
+            'phone_number' => 'nullable|string|max:20',
+            'medical_condition' => 'nullable|string|max:255',
+        ]);
+
+        $user->update($request->only([
+            'name',
+            'age',
+            'gender',
+            'phone_number',
+            'medical_condition'
+        ]));
+
+        return response()->json([
+            'message' => 'Profile updated successfully.',
+            'data' => $user
+        ]);
     }
 
 }

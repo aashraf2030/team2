@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\SocialAuthController;
+use App\Http\Controllers\API\RayController;
+use App\Http\Controllers\API\AppointmentController;
+use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\API\DoctorController;
 
 Route::post('/register', [AuthController::class, 'register']);
 
@@ -96,3 +100,33 @@ Route::post('/reset-password', function (Request $request) {
 Route::get('/auth/{provider}/redirect', [SocialAuthController::class, 'redirectToProvider']);
 
 Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback']);
+
+Route::middleware('auth:sanctum')->post('/rays', [RayController::class, 'store']);
+
+Route::middleware('auth:sanctum')->get('/rays', [RayController::class, 'index']);
+
+Route::middleware('auth:sanctum')->post('/appointments', [AppointmentController::class, 'store']);
+
+Route::get('/appointments/available', [AppointmentController::class, 'availableSlots']);
+
+Route::middleware('auth:sanctum')->get('/appointments/my', [AppointmentController::class, 'myAppointment']);
+
+Route::middleware('auth:sanctum')->get('/me', [AuthController::class, 'profile']);
+
+Route::middleware('auth:sanctum')->put('/me', [AuthController::class, 'updateProfile']);
+
+Route::middleware('auth:sanctum')->get('/doctors', [UserController::class, 'listDoctors']);
+
+Route::middleware(['auth:sanctum'])->get('/doctor/patients', [DoctorController::class, 'listPatients']);
+
+Route::middleware('auth:sanctum')->post('/doctor/notes', [DoctorController::class, 'addNote']);
+
+Route::middleware('auth:sanctum')->put('/doctor/notes/{id}', [DoctorController::class, 'updateNote']);
+
+Route::middleware('auth:sanctum')->delete('/doctor/notes/{id}', [DoctorController::class, 'deleteNote']);
+
+Route::middleware('auth:sanctum')->get('/doctor/patients/{id}/notes', [DoctorController::class, 'getPatientNotes']);
+
+Route::middleware('auth:sanctum')->get('/doctor/rays/{id}/ai', [DoctorController::class, 'showRayAI']);
+
+Route::middleware('auth:sanctum')->post('/doctor/patients/status', [DoctorController::class, 'setPatientStatus']);
