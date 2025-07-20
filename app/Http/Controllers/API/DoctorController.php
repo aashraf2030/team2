@@ -45,9 +45,9 @@ class DoctorController extends Controller
 
         $note = MedicalNote::create([
             'doctor_id' => $doctorId,
-            'patient_id' => $request->patient_id,
-            'note' => $request->note,
-            'ray_id' => $request->ray_id,
+            'patient_id' => $request->input('patient_id'),
+            'note' => $request->input('note'),
+            'ray_id' => $request->input('ray_id'),
         ]);
 
         return response()->json([
@@ -71,7 +71,7 @@ class DoctorController extends Controller
         }
 
         $note->update([
-            'note' => $request->note
+            'note' => $request->input('note')
         ]);
 
         return response()->json([
